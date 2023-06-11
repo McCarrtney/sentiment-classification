@@ -3,14 +3,7 @@ import gradio as gr
 import argparse
 import os
 import mdtex2html
-from models import GPT, BERT
-
-from transformers import AutoTokenizer, BertForSequenceClassification
-
-tokenizer = AutoTokenizer.from_pretrained("/Users/mccartney/downloads/bert-base-uncased-SST-2")
-
-bert_model = BertForSequenceClassification.from_pretrained("/Users/mccartney/downloads/bert-base-uncased-SST-2")
-
+from model import GPT, BERT, TFIDF_KNN, TFIDF_LR, BERT_KNN, BERT_LR
 
 def postprocess(self, y):
     if y is None:
@@ -30,6 +23,9 @@ def reset_user_input():
 def reset_state():
     return [], []
 
+def transform(label):
+    return "Positive Sentiment" if label==1 else "Negative Sentiment"
+
 def predict(
     input,
     chatbot,
@@ -44,8 +40,16 @@ def predict(
 
     if model=='GPT-3.5-turbo':
         output = GPT(input)
-    elif model=='BERT':
-        output = BERT(bert_model, tokenizer, input)
+    elif model=='BERT (for classification)':
+        output = transform(BERT(input))
+    elif model=="Logistic Regression (TFIDF)":
+        output = transform(TFIDF_LR(input))
+    elif model=="Logistic Regression (BERT)":
+        output = transform(BERT_LR(input))
+    elif model=="KNN (TFIDF)":
+        output = transform(TFIDF_KNN(input))
+    elif model=="KNN (BERT)":
+        output = transform(BERT_KNN(input))
 
     history.append((now_input, output))
     chatbot[-1] = (now_input, output)
@@ -56,9 +60,13 @@ with gr.Blocks() as demo:
     gr.HTML("""<h1 align="center">Data Mining Project</h1>""")
     with gr.Column(elem_id="col_container"):
         model = gr.Radio(
-            value="BERT",
+            value="Logistic Regression (TFIDF)",
             choices=[
-                "BERT",
+                "Logistic Regression (TFIDF)",
+                "Logistic Regression (BERT)",
+                "KNN (TFIDF)",
+                "KNN (BERT)",
+                "BERT (for classification)",
                 "GPT-3.5-turbo",
             ],
             label="Model",
