@@ -6,8 +6,8 @@ GPT_RESPONCE='data/gpt_responce.json'
 TFIDF_VECTOR_PATH="models/tfidf_vec.pkl"
 
 # change to your path
-BERT_VECTOR_PATH="/Users/mccartney/Downloads/bert-base-uncased"
-BERT_PATH="/Users/mccartney/downloads/bert-base-uncased-SST-2"
+BERT_VECTOR_PATH=""
+BERT_PATH=""
 
 TFIDF_LR_PATH="models/tfidf_logistic.pkl"
 BERT_LR_PATH="models/bert_base_uncased_logistic.pkl"
